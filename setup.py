@@ -17,6 +17,7 @@ setup(name='pytest-diffeo',
       author='Diffeo, Inc.',
       author_email='support@diffeo.com',
       packages=find_packages(),
+      include_package_data=True,
       install_requires=['pytest'],
       entry_points={
           'pytest11': [
