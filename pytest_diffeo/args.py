@@ -51,3 +51,10 @@ def pytest_runtest_setup(item):
         run = '--run{}'.format(option)
         if marker in item.keywords and not item.config.getoption(run):
             pytest.skip('need {} option to run'.format(run))
+
+@pytest.fixture(scope='session')
+def redis_address(request):
+    addr = request.config.getoption('--redis-address')
+    assert addr is not None, \
+        "this test requires --redis-address on the command line"
+    return addr
