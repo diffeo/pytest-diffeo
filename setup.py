@@ -13,6 +13,7 @@ VERSION, SOURCE_LABEL = version.get_git_version()
 setup(name='pytest-diffeo',
       version=VERSION,
       description='Common py.test support for Diffeo packages',
+      url='https://github.com/diffeo/pytest-diffeo',
       long_description=read_file('README.md'),
       author='Diffeo, Inc.',
       author_email='support@diffeo.com',
