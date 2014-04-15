@@ -10,7 +10,7 @@ def read_file(fn):
         return f.read()
 
 VERSION, SOURCE_LABEL = version.get_git_version()
-setup(name='pytest-diffeo',
+setup(name='pytest_diffeo',
       version=VERSION,
       description='Common py.test support for Diffeo packages',
       url='https://github.com/diffeo/pytest-diffeo',

@@ -18,6 +18,7 @@ Copyright 2012-2014 Diffeo, Inc.
 """
 
 from __future__ import absolute_import
+import os.path
 import pytest
 
 def pytest_addoption(parser):
@@ -28,10 +29,13 @@ def pytest_addoption(parser):
                     help='run performance tests')
     group.addoption('--runload', action='store_true',
                     help='run load tests')
-    
-    group = parser.getgroup('external systems')
+
+    group = parser.getgroup('external dependencies')
     group.addoption('--redis-address', metavar='HOST:PORT',
                      help='location of a Redis database server')
+    group.addoption('--test-data-dir', metavar='TEST-DATA-DIRECTORY',
+                     default='/opt/diffeo/data', action="store",
+                     help='location of test data directory')
 
 def pytest_configure(config):
     # Declare our markers
@@ -58,3 +62,10 @@ def redis_address(request):
     assert addr is not None, \
         "this test requires --redis-address on the command line"
     return addr
+
+@pytest.fixture(scope='session')
+def test_data_dir(request):
+    test_data_dir = request.config.getoption('--test-data-dir')
+    assert os.path.exists(test_data_dir), \
+        "Directory with test directory must exist"
+    return test_data_dir
