@@ -75,17 +75,14 @@ def pytest_runtest_setup(item):
 
     profile_outpath = item.config.getoption('profile')
     if profile_outpath:
-        sys.stderr.write('\nstarting profiling into dest={!r}\n'.format(profile_outpath))
         prof = profile.Profile()
         prof.enable()
         item.profiler = prof
 
 
 def pytest_runtest_teardown(item, nextitem):
-    sys.stderr.write('\n pytest diffeo runtest teardown\n')
     profile_outpath = item.config.getoption('profile')
     if profile_outpath:
-        sys.stderr.write('\nfinishing profiling into dest={!r}\n'.format(profile_outpath))
         prof = getattr(item, 'profiler', None)
         if prof:
             prof.disable()
