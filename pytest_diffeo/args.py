@@ -39,7 +39,9 @@ def pytest_addoption(parser):
                     help='run performance tests')
     group.addoption('--runload', action='store_true',
                     help='run load tests')
-    
+    group.addoption('--run-integration', action='store_true',
+                    help='run integration tests')
+
     group = parser.getgroup('external systems')
     group.addoption('--redis-address', metavar='HOST:PORT',
                      help='location of a Redis database server')
@@ -57,6 +59,8 @@ def pytest_configure(config):
                             'performance: mark tests as performance tests')
     config.addinivalue_line('markers',
                             'load: mark tests as load tests')
+    config.addinivalue_line('markers',
+                            'integration: mark tests as integration tests')
 
     profile_outpath = config.getoption('profile')
     if profile_outpath:
@@ -67,7 +71,8 @@ def pytest_configure(config):
 def pytest_runtest_setup(item):
     pairs = [('slow', 'slow'),
              ('perf', 'performance'),
-             ('load', 'load')]
+             ('load', 'load'),
+             ('-integration', 'integration')]
     for option, marker in pairs:
         run = '--run{}'.format(option)
         if marker in item.keywords and not item.config.getoption(run):
