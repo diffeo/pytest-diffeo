@@ -45,6 +45,8 @@ def pytest_addoption(parser):
     group = parser.getgroup('external systems')
     group.addoption('--redis-address', metavar='HOST:PORT',
                      help='location of a Redis database server')
+    group.addoption('--third-dir', metavar='THIRD-DIR',
+                     help='location of a third party software')
 
     group = parser.getgroup('general')
     group.addoption('--profile', metavar='path',
@@ -109,3 +111,11 @@ def redis_address(request):
     assert addr is not None, \
         "this test requires --redis-address on the command line"
     return addr
+
+@pytest.fixture(scope='session')
+def third_dir(request):
+    third_dir = request.config.getoption('--third-dir')
+    assert third_dir is not None, \
+        "this test requires --third_dir on the command line"
+    assert os.path.exists(third_dir), "Directory must exist"
+    return third_dir
