@@ -16,5 +16,6 @@ from __future__ import absolute_import
 from pytest_diffeo.args import pytest_addoption, pytest_configure, \
     pytest_runtest_setup, \
     pytest_runtest_teardown, \
+    third_dir, \
     redis_address
 from pytest_diffeo.namespace import make_namespace_string, namespace_string

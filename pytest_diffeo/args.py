@@ -107,6 +107,8 @@ def pytest_runtest_teardown(item, nextitem):
 
 @pytest.fixture(scope='session')
 def redis_address(request):
+    '''network address for a redis server to be used by tests
+    '''
     addr = request.config.getoption('--redis-address')
     assert addr is not None, \
         "this test requires --redis-address on the command line"
@@ -114,6 +116,8 @@ def redis_address(request):
 
 @pytest.fixture(scope='session')
 def third_dir(request):
+    '''directory containing third-party software, such as NLP taggers
+    '''
     third_dir = request.config.getoption('--third-dir')
     assert third_dir is not None, \
         "this test requires --third_dir on the command line"
