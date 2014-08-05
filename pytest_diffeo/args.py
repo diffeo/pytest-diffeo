@@ -110,6 +110,11 @@ def redis_address(request):
     '''network address for a redis server to be used by tests
     '''
     addr = request.config.getoption('--redis-address')
+    if addr is None:
+        host = os.environ.get('REDIS_PORT_6379_TCP_ADDR', None)
+        port = os.environ.get('REDIS_PORT_6379_TCP_PORT', None)
+        if host and port:
+            addr = host + ':' + port
     assert addr is not None, \
         "this test requires --redis-address on the command line"
     return addr
