@@ -8,6 +8,10 @@ This enables some common command-line arguments:
   Run tests flagged with @pytest.fixture.performance
 ``--redis-address``
   hostname:portnumber for a Redis instance
+``--profile outfile``
+  log profiling data per test to outfile
+``--profile-truncate``
+  clobber any old profiling out file at start of run
 
 -----
 
@@ -20,6 +24,10 @@ Copyright 2012-2014 Diffeo, Inc.
 from __future__ import absolute_import
 import os.path
 import pstats
+try:
+    import cStringIO as StringIO
+except:
+    import StringIO
 import sys
 import time
 
@@ -51,6 +59,8 @@ def pytest_addoption(parser):
     group = parser.getgroup('general')
     group.addoption('--profile', metavar='path',
                     help='run tests with profiling, write results to file')
+    group.addoption('--profile-truncate', action='store_true', default=False,
+                    help='when profiling, truncate output file at start of run')
 
 def pytest_configure(config):
     # Declare our markers
@@ -64,11 +74,13 @@ def pytest_configure(config):
     config.addinivalue_line('markers',
                             'integration: mark tests as integration tests')
 
-    profile_outpath = config.getoption('profile')
-    if profile_outpath:
-        fout = open(profile_outpath, 'w')
-        fout.truncate(0)
-        fout.close()
+    if config.getoption('profile_truncate'):
+        profile_outpath = config.getoption('profile')
+        if profile_outpath:
+            fout = open(profile_outpath, 'w')
+            fout.truncate(0)
+            fout.close()
+
 
 def pytest_runtest_setup(item):
     pairs = [('slow', 'slow'),
@@ -93,7 +105,8 @@ def pytest_runtest_teardown(item, nextitem):
         prof = getattr(item, 'profiler', None)
         if prof:
             prof.disable()
-            fout = open(profile_outpath, 'a')
+            # build blob to write one-shot to beat thread interleaving.
+            fout = StringIO.StringIO()
             fout.write('\n{0} {1}\n'.format(time.strftime('%Y%m%d_%H%M%S'), item))
             ps = pstats.Stats(prof, stream=fout)
             ps.sort_stats('cumulative', 'calls')
@@ -102,7 +115,9 @@ def pytest_runtest_teardown(item, nextitem):
             ps.print_callers()
             fout.write('\n\tfunction callees\n')
             ps.print_callees()
-            fout.close()
+            ff = open(profile_outpath, 'a')
+            ff.write(fout.getvalue())
+            ff.close()
 
 
 @pytest.fixture(scope='session')
