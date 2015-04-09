@@ -24,10 +24,6 @@ Copyright 2012-2014 Diffeo, Inc.
 from __future__ import absolute_import
 import os.path
 import pstats
-try:
-    import cStringIO as StringIO
-except:
-    import StringIO
 import sys
 import time
 
@@ -37,6 +33,7 @@ except:
     import profile
 
 import pytest
+from six import StringIO
 
 
 def pytest_addoption(parser):
