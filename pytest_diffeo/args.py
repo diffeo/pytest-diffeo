@@ -85,9 +85,9 @@ def pytest_runtest_setup(item):
              ('load', 'load'),
              ('-integration', 'integration')]
     for option, marker in pairs:
-        run = '--run{}'.format(option)
+        run = '--run{0}'.format(option)
         if marker in item.keywords and not item.config.getoption(run):
-            pytest.skip('need {} option to run'.format(run))
+            pytest.skip('need {0} option to run'.format(run))
 
     profile_outpath = item.config.getoption('profile')
     if profile_outpath:
