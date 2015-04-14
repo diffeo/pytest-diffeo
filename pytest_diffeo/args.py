@@ -103,7 +103,7 @@ def pytest_runtest_teardown(item, nextitem):
         if prof:
             prof.disable()
             # build blob to write one-shot to beat thread interleaving.
-            fout = StringIO.StringIO()
+            fout = StringIO()
             fout.write('\n{0} {1}\n'.format(time.strftime('%Y%m%d_%H%M%S'), item))
             ps = pstats.Stats(prof, stream=fout)
             ps.sort_stats('cumulative', 'calls')
