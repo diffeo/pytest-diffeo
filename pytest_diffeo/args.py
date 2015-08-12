@@ -48,6 +48,8 @@ def pytest_addoption(parser):
                     help='run integration tests')
 
     group = parser.getgroup('external systems')
+    group.addoption('--elastic-address', metavar='HOST:PORT',
+                     help='location of an ElasticSearch database server')
     group.addoption('--redis-address', metavar='HOST:PORT',
                      help='location of a Redis database server')
     group.addoption('--third-dir', metavar='THIRD-DIR',
@@ -104,7 +106,8 @@ def pytest_runtest_teardown(item, nextitem):
             prof.disable()
             # build blob to write one-shot to beat thread interleaving.
             fout = StringIO()
-            fout.write('\n{0} {1}\n'.format(time.strftime('%Y%m%d_%H%M%S'), item))
+            fout.write(
+                '\n{0} {1}\n'.format(time.strftime('%Y%m%d_%H%M%S'), item))
             ps = pstats.Stats(prof, stream=fout)
             ps.sort_stats('cumulative', 'calls')
             ps.print_stats()
@@ -130,6 +133,21 @@ def redis_address(request):
     assert addr is not None, \
         "this test requires --redis-address on the command line"
     return addr
+
+
+@pytest.fixture(scope='session')
+def elastic_address(request):
+    'network address for an ElasticSearch server to be used by tests'
+    addr = request.config.getoption('--elastic-address')
+    if addr is None:
+        host = os.environ.get('ELASTICSEARCH_PORT_9200_TCP_ADDR', None)
+        port = os.environ.get('ELASTICSEARCH_PORT_9200_TCP_PORT', None)
+        if host and port:
+            addr = host + ':' + port
+    assert addr is not None, \
+        "this test requires --elastic-address on the command line"
+    return addr
+
 
 @pytest.fixture(scope='session')
 def third_dir(request):
