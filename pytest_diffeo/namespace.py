@@ -22,6 +22,7 @@ import socket
 
 import pytest
 
+
 def make_namespace_string(test_name=''):
     """Generate a descriptive namespace for testing.
 
@@ -36,12 +37,17 @@ def make_namespace_string(test_name=''):
     and destroying the namespace.
 
     """
-    return '_'.join([
-            re.sub('\W', '', test_name)[-23:], 
+    s = '_'.join([
+            re.sub('\W', '', test_name)[-23:],
             getpass.getuser().replace('-', '_')[:5],
             str(os.getpid())[-5:],
             hashlib.md5(socket.gethostname()).hexdigest()[:4],
             ])
+    if s.startswith('_'):
+        # ElasticSearch can't handle names that start with `_`.
+        s = 'z' + s
+    return s.lower()  # ElasticSearch also demands lowercase
+
 
 @pytest.fixture(scope='function')
 def namespace_string(request):

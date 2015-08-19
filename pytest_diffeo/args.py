@@ -22,10 +22,11 @@ Copyright 2012-2014 Diffeo, Inc.
 """
 
 from __future__ import absolute_import
+import logging
 import os.path
 import pstats
-import sys
 import time
+
 
 try:
     import cProfile as profile
@@ -49,17 +50,21 @@ def pytest_addoption(parser):
 
     group = parser.getgroup('external systems')
     group.addoption('--elastic-address', metavar='HOST:PORT',
-                     help='location of an ElasticSearch database server')
+                    help='location of an ElasticSearch database server')
     group.addoption('--redis-address', metavar='HOST:PORT',
-                     help='location of a Redis database server')
+                    help='location of a Redis database server')
     group.addoption('--third-dir', metavar='THIRD-DIR',
-                     help='location of a third party software')
+                    help='location of a third party software')
 
     group = parser.getgroup('general')
     group.addoption('--profile', metavar='path',
                     help='run tests with profiling, write results to file')
     group.addoption('--profile-truncate', action='store_true', default=False,
-                    help='when profiling, truncate output file at start of run')
+                    help='when profiling, truncate output file at start')
+    group.addoption('--log-level', metavar='DEBUG|INFO|WARNING|ERROR|FATAL',
+                    default='DEBUG',
+                    help='Control logging level of tests.')
+
 
 def pytest_configure(config):
     # Declare our markers
@@ -96,6 +101,9 @@ def pytest_runtest_setup(item):
         prof = profile.Profile()
         prof.enable()
         item.profiler = prof
+
+    logger = logging.getLogger()
+    logger.setLevel(getattr(logging, item.config.getoption('log_level')))
 
 
 def pytest_runtest_teardown(item, nextitem):
