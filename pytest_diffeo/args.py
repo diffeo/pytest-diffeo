@@ -6,12 +6,16 @@ This enables some common command-line arguments:
   Run tests flagged with @pytest.fixture.slow
 ``--runperf``
   Run tests flagged with @pytest.fixture.performance
+``--run-go-ingest-pipeline``
+  Run tests flagged with @pytest.fixture.go_ingest_pipeline
 ``--redis-address``
   hostname:portnumber for a Redis instance
 ``--profile outfile``
   log profiling data per test to outfile
 ``--profile-truncate``
   clobber any old profiling out file at start of run
+``--elastic-address``
+  hostname:portnumber for an Elasticsearch instance
 
 -----
 
@@ -47,6 +51,8 @@ def pytest_addoption(parser):
                     help='run load tests')
     group.addoption('--run-integration', action='store_true',
                     help='run integration tests')
+    group.addoption('--run-go-ingest-pipeline', action='store_true',
+                    help='run tests that use the Go ingest pipeline')
 
     group = parser.getgroup('external systems')
     group.addoption('--elastic-address', metavar='HOST:PORT',
