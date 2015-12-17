@@ -93,10 +93,13 @@ def pytest_configure(config):
 
 
 def pytest_runtest_setup(item):
-    pairs = [('slow', 'slow'),
-             ('perf', 'performance'),
-             ('load', 'load'),
-             ('-integration', 'integration')]
+    pairs = [
+        ('slow', 'slow'),
+        ('perf', 'performance'),
+        ('load', 'load'),
+        ('-integration', 'integration'),
+        ('-go-ingest-pipeline', 'go_ingest_pipeline'),
+    ]
     for option, marker in pairs:
         run = '--run{0}'.format(option)
         if marker in item.keywords and not item.config.getoption(run):
