@@ -18,5 +18,6 @@ from pytest_diffeo.args import pytest_addoption, pytest_configure, \
     pytest_runtest_teardown, \
     third_dir, \
     redis_address, \
+    ingest_v2, \
     elastic_address
 from pytest_diffeo.namespace import make_namespace_string, namespace_string

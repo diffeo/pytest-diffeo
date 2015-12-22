@@ -6,8 +6,8 @@ This enables some common command-line arguments:
   Run tests flagged with @pytest.fixture.slow
 ``--runperf``
   Run tests flagged with @pytest.fixture.performance
-``--run-go-ingest-pipeline``
-  Run tests flagged with @pytest.fixture.go_ingest_pipeline
+``--ingest-v2``
+  Run tests flagged with @pytest.fixture.ingest_v2
 ``--redis-address``
   hostname:portnumber for a Redis instance
 ``--profile outfile``
@@ -51,10 +51,10 @@ def pytest_addoption(parser):
                     help='run load tests')
     group.addoption('--run-integration', action='store_true',
                     help='run integration tests')
-    group.addoption('--run-go-ingest-pipeline', action='store_true',
-                    help='run tests that use the Go ingest pipeline')
 
     group = parser.getgroup('external systems')
+    group.addoption('--ingest-v2', metavar='URL',
+                    help='URL for Streamcorpus v2 ingest service')
     group.addoption('--elastic-address', metavar='HOST:PORT',
                     help='location of an ElasticSearch database server')
     group.addoption('--redis-address', metavar='HOST:PORT',
@@ -98,7 +98,6 @@ def pytest_runtest_setup(item):
         ('perf', 'performance'),
         ('load', 'load'),
         ('-integration', 'integration'),
-        ('-go-ingest-pipeline', 'go_ingest_pipeline'),
     ]
     for option, marker in pairs:
         run = '--run{0}'.format(option)
@@ -164,6 +163,16 @@ def elastic_address(request):
     assert addr is not None, \
         "this test requires --elastic-address on the command line"
     return addr
+
+
+@pytest.fixture(scope='session')
+def ingest_v2(request):
+    'URL for Streamcorpus v2 ingest service'
+    url = request.config.getoption('--ingest-v2')
+    if url is None:
+        url = os.environ.get('STREAMCORPUS_INGEST_URL', None)
+    # returning None means tests marked with this will not run
+    return url
 
 
 @pytest.fixture(scope='session')
