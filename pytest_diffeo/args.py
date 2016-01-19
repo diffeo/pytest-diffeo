@@ -171,7 +171,10 @@ def ingest_v2(request):
     url = request.config.getoption('--ingest-v2')
     if url is None:
         url = os.environ.get('STREAMCORPUS_INGEST_URL', None)
-    # returning None means tests marked with this will not run
+    # returning None means tests marked with this will not run. --jrf
+    # Uhh, not, it doesn't. Skip it explicitly to get desired behavior. ---AG
+    if url is None:
+        pytest.skip('set --ingest-v2 or env var STREAMCORPUS_INGEST_URL')
     return url
 
 
