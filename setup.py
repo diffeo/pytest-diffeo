@@ -20,7 +20,11 @@ setup(name='pytest-diffeo',
       author_email='support@diffeo.com',
       packages=find_packages(),
       include_package_data=True,
-      install_requires=['pytest', 'pytest-capturelog', 'six'],
+      install_requires=[
+          'pytest',
+          # 'pytest-capturelog',
+          'six',
+      ],
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Topic :: Utilities',

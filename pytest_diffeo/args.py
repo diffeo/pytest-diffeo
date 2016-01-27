@@ -111,7 +111,9 @@ def pytest_runtest_setup(item):
         item.profiler = prof
 
     logger = logging.getLogger()
-    logger.setLevel(getattr(logging, item.config.getoption('log_level')))
+    level = getattr(logging, item.config.getoption('log_level'))
+    assert level is not None
+    logger.setLevel(level)
 
 
 def pytest_runtest_teardown(item, nextitem):
