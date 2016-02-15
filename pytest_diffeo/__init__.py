@@ -17,6 +17,7 @@ from pytest_diffeo.args import pytest_addoption, pytest_configure, \
     pytest_runtest_setup, \
     pytest_runtest_teardown, \
     third_dir, \
+    external_data, \
     redis_address, \
     ingest_v2, \
     elastic_address

@@ -61,6 +61,8 @@ def pytest_addoption(parser):
                     help='location of a Redis database server')
     group.addoption('--third-dir', metavar='THIRD-DIR',
                     help='location of a third party software')
+    group.addoption('--external-data', metavar='EXTERNAL_DATA',
+                    help='location of a external data resources')
 
     group = parser.getgroup('general')
     group.addoption('--profile', metavar='path',
@@ -189,3 +191,18 @@ def third_dir(request):
         "this test requires --third_dir on the command line"
     assert os.path.exists(third_dir), "Directory must exist"
     return third_dir
+
+
+@pytest.fixture(scope='session')
+def external_data(request):
+    '''directory containing external data for tests
+    '''
+    external_data = request.config.getoption('--external-data')
+    if external_data is None:
+        external_data = os.environ.get('EXTERNAL_DATA', None)
+    if external_data is None:
+        pytest.skip('set --external-data or env var EXTERNAL_DATA')
+    else:
+        assert os.path.exists(external_data), \
+            'Could not find external_data=%r' % external_data
+    return external_data
